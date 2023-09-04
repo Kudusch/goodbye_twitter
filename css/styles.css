@@ -1,0 +1,21 @@
+body {
+	max-width: 700px;
+	margin: auto;
+}
+
+article {
+	background-color: pink;
+}
+
+.tweet {
+	
+}
+
+.retweet {
+	text-align: right;
+}
+
+nav {
+	display: flex;
+	justify-content: space-between;
+}
