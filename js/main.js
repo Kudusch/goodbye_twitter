@@ -100,7 +100,7 @@ function tweets_to_html(tweets) {
     return html;
 }
 
-function prep_tweets() {
+function prep_tweets(filter) {
     let tweets = window.YTD.tweets.part0;
     if (sort_direction == "asc") {
         tweets.sort(function(a, b) {
@@ -126,28 +126,44 @@ function prep_tweets() {
             return !tweet["tweet"]["full_text"].startsWith("@");
         });
     }
+    console.log(filter);
+    if (!(filter === undefined)) {
+        console.log(filter);
+        tweets = tweets.filter(function (tweet) {
+            return tweet["tweet"]["full_text"].includes(filter);
+        });
+    }
     return tweets;
 }
 
 document_ready(function() {
     console.log("Ready");
     
-    let tweets = prep_tweets();
-    
     const url_params = new URLSearchParams(window.location.search);
-    let current_page = 1;
     if (url_params.has("p")) {
-        current_page = parseInt(url_params.get("p"));
+        var current_page = parseInt(url_params.get("p"));
+    } else {
+        var current_page = 1;
     }
     
+    if (url_params.has("q")) {
+        var tweets = prep_tweets(url_params.get("q"));
+        document.getElementById("info").innerHTML = "There are " + Object.keys(tweets).length + " tweets matching <i>" + url_params.get("q") + "</i>";
+        document.getElementById("next_page").href = "?p=" + (current_page+1) + "&q=" + url_params.get("q");
+        document.getElementById("prev_page").href = "?p=" + (current_page-1) + "&q=" + url_params.get("q");
+    } else {
+        var tweets = prep_tweets();
+        document.getElementById("info").innerHTML = "There are " + Object.keys(tweets).length + " tweets.";
+        document.getElementById("next_page").href = "?p=" + (current_page+1);
+        document.getElementById("prev_page").href = "?p=" + (current_page-1);
+    }
     document.getElementById("cur_page").innerHTML = current_page;
     document.getElementById("max_page").innerHTML = Math.ceil(tweets.length / tweets_per_page);
-    document.getElementById("next_page").href = "?p=" + (current_page+1);
-    document.getElementById("prev_page").href = "?p=" + (current_page-1);
     
     document.title = "Indexing " + Object.keys(tweets).length + " Tweets by " + user_name;
     document.getElementsByTagName("header")[0].children[0].innerHTML = "<h1>Indexing " + Object.keys(tweets).length + " Tweets by " + user_name + "</h1>";
-    document.getElementById("info").innerHTML = "There are " + Object.keys(tweets).length + " tweets.";
+    
+    
     let start_slice = (current_page - 1 ) * tweets_per_page;
     let end_slice = (current_page) * tweets_per_page;
     let page_tweets = tweets_to_html(tweets.slice(start_slice, end_slice));
