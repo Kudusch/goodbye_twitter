@@ -28,7 +28,7 @@ function parse_entities(tweet) {
                     if (key == "urls") {
                         parsed_entity.replacement = "<a href='" + entity.expanded_url + "'>" + entity.display_url + "</a>";
                     } else if (key == "hashtags") {
-                        parsed_entity.replacement = "<a href='?q=hashtag:" + entity.text + "'>" + entity.text + "</a>";
+                        parsed_entity.replacement = "<a href='?q=%23" + entity.text + "'>#" + entity.text + "</a>";
                     } else if (key == "media") {
                         parsed_entity.replacement = "<img src='data/tweets_media/" + tweet.id + "-" + entity.media_url.split("/").slice(-1) + "'>";
                     } else if (key == "user_mentions") {
@@ -77,10 +77,10 @@ function tweet_to_html(tweet) {
     } else {
         article.classList.add("tweet");
         tweet_text.innerHTML = full_text;
-        tweet_author.innerText = "Posted by @Kudusch";
+        tweet_author.innerText = "Posted by @" + user_name;
     }
     
-    tweet_time.innerText = as_datetime(tweet.created_at);
+    tweet_time.innerHTML = "<a href='https://twitter.com/" + user_name + "/statuses/" + tweet.id_str + "'>" + as_datetime(tweet.created_at) + "</a>";
     tweet_time.classList.add("datetime");
     // tweet_meta.innerText = tweet.id_str;
     // tweet_meta.classList.add("meta");
@@ -126,16 +126,36 @@ function prep_tweets(filter) {
             return !tweet["tweet"]["full_text"].startsWith("@");
         });
     }
-    console.log(filter);
-    if (!(filter === undefined)) {
-        console.log(filter);
-        tweets = tweets.filter(function (tweet) {
-            return tweet["tweet"]["full_text"].includes(filter);
-        });
+    if (Object.keys(filter).length != 0) {
+        if ("q" in filter) {
+            tweets = tweets.filter(function (tweet) {
+                return tweet["tweet"]["full_text"].includes(filter.q);
+            })
+        }
+        if ("d" in filter) {
+            tweets = tweets.filter(function (tweet) {
+                let filter_date = filter.d.split("-");
+                let y = filter_date[0], m = filter_date[1], d = filter_date[2];
+                
+                let tweet_date = new Date(tweet["tweet"]["created_at"]);
+                let y_tweet = tweet_date.getFullYear(), m_tweet = tweet_date.getMonth() + 1, d_tweet = tweet_date.getDate();
+                
+                let y_check = (y == "*" || y == y_tweet);
+                let m_check = (m == "*" || m == m_tweet);
+                let d_check = (d == "*" || d == d_tweet);
+                
+                if (y_check && m_check && d_check) {
+                    return true;
+                } else {
+                    return false
+                }
+            });
+        }
     }
     return tweets;
 }
 
+// Main
 document_ready(function() {
     console.log("Ready");
     
@@ -146,23 +166,39 @@ document_ready(function() {
         var current_page = 1;
     }
     
+    let filter = {};
     if (url_params.has("q")) {
-        var tweets = prep_tweets(url_params.get("q"));
-        document.getElementById("info").innerHTML = "There are " + Object.keys(tweets).length + " tweets matching <i>" + url_params.get("q") + "</i>";
-        document.getElementById("next_page").href = "?p=" + (current_page+1) + "&q=" + url_params.get("q");
-        document.getElementById("prev_page").href = "?p=" + (current_page-1) + "&q=" + url_params.get("q");
-    } else {
-        var tweets = prep_tweets();
-        document.getElementById("info").innerHTML = "There are " + Object.keys(tweets).length + " tweets.";
-        document.getElementById("next_page").href = "?p=" + (current_page+1);
-        document.getElementById("prev_page").href = "?p=" + (current_page-1);
+        filter["q"] = url_params.get("q");
+        document.getElementById("query_filter").value = url_params.get("q");
     }
+    if (url_params.has("d")) {
+        filter["d"] = url_params.get("d");
+        document.getElementById("date_filter").value = url_params.get("d");
+    }
+    
+    var tweets = prep_tweets(filter);
+    document.getElementById("info").innerHTML = "There are " + Object.keys(tweets).length + " tweets matching the filter.";
+    
+    let nav_href = [];
+    if (url_params.has("d")) {
+        nav_href.push("d=" + url_params.get("d"))
+    }
+    if (url_params.has("q")) {
+        nav_href.push("q=" + url_params.get("q"))
+    }
+    if (nav_href.length != 0) {
+        nav_href = "&" + nav_href.join("&")
+    } else {
+        nav_href = nav_href.join("&")
+    }
+    document.getElementById("next_page").href = "?p=" + (current_page+1) + nav_href;
+    document.getElementById("prev_page").href = "?p=" + (current_page-1) + nav_href;
+    
     document.getElementById("cur_page").innerHTML = current_page;
     document.getElementById("max_page").innerHTML = Math.ceil(tweets.length / tweets_per_page);
     
     document.title = "Indexing " + Object.keys(tweets).length + " Tweets by " + user_name;
     document.getElementsByTagName("header")[0].children[0].innerHTML = "<h1>Indexing " + Object.keys(tweets).length + " Tweets by " + user_name + "</h1>";
-    
     
     let start_slice = (current_page - 1 ) * tweets_per_page;
     let end_slice = (current_page) * tweets_per_page;

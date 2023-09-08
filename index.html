@@ -23,8 +23,16 @@
 </head>
 
 <body>
-  <header></header>
+  <header><a href="?p=1"></a></header>
   <main>
+    <form>
+      <input type="text" name="q" id="query_filter"/>
+      <input type="submit" value="Search"/>
+    </form>
+    <form>
+      <input type="text" name="d" id="date_filter"/>
+      <input type="submit" value="Date"/>
+    </form>
     <p id="info"></p>
     <div id="tweets"></div>
   </main>
