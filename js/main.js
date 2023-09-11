@@ -51,6 +51,19 @@ function as_datetime(s) {
     return d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2, 0) + "-" + String(d.getDate()).padStart(2, 0) + " " + String(d.getHours()).padStart(2, 0) + ":" + String(d.getMinutes()).padStart(2, 0)
 }
 
+function as_ym(s) {
+    let d = new Date(s);
+    return d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2, 0);
+}
+function as_md(s) {
+    let d = new Date(s);
+    return String(d.getMonth()+1).padStart(2, 0) + "-" + String(d.getDate()).padStart(2, 0);
+}
+// https://stackoverflow.com/questions/1184334/get-number-days-in-a-specified-month-using-javascript
+function days_in_month(month, year) {
+    return new Date(year, month, 0).getDate();
+}
+
 function enrich_text(tweet) {
     let offset = 0;
     let entities = parse_entities(tweet);
@@ -155,6 +168,89 @@ function prep_tweets(filter) {
     return tweets;
 }
 
+// https://stackoverflow.com/questions/54673408/get-max-min-from-array-of-strings-javascript
+function get_range(arr) {
+  if (!arr) {
+    return null;
+  }
+  var minV = arr[0];
+  var maxV = arr[0];
+  arr.forEach(a => {
+    if (a < minV) minV = a;
+    if (a > maxV) maxV = a;
+  });
+  return [parseInt(minV.split(("-")[0])), parseInt(maxV.split(("-")[0]))];
+}
+
+function make_bars(tweets, filter) {
+    if (!("d" in filter)) {
+      var all_dates = tweets.map(function (tweet){
+        return as_ym(tweet.tweet.created_at);
+      });
+    } else {
+      var all_dates = tweets.map(function (tweet){
+        return as_md(tweet.tweet.created_at);
+      });
+    }
+    
+    let bar_counts = {};
+    all_dates.forEach(el => {
+      bar_counts[el] = (bar_counts[el] || 0) + 1;
+    })
+    
+    if (!("d" in filter)) {
+      let bar_range = get_range(Object.keys(bar_counts));
+      for (var y = bar_range[0]; y <= bar_range[1]; y++) {
+        for (var m = 1; m <= 12; m++) {
+          let k = y + "-" + String(m).padStart(2, 0);
+          if (!(k in bar_counts)) {
+            bar_counts[k] = 0;
+          }
+        }
+      }
+    }
+    let max_count =Object.values(bar_counts).reduce((a, b) => Math.max(a, b), -Infinity);
+    
+    let bars = document.getElementById("bars");
+    Object.keys(bar_counts).sort().forEach(k => {
+      var bar = document.createElement("div");
+      bar.style = "height:" + (bar_counts[k]/max_count)*100 + "%; width: " + (1/Object.keys(bar_counts).length)*100 + "%;";
+      bar.classList.add("bar");
+      bar.onmouseover = bar_mouseOver;
+      bar.onmouseout = bar_mouseOut;
+      bar.onclick = bar_click;
+      bar.dataset.name = k;
+      bar.dataset.count = bar_counts[k];
+      bars.append(bar);
+    });
+}
+function hide_bars(filter) {
+  if ("d" in filter) {
+    let split_filter = filter.d.split("-");
+    if (split_filter[0] != "*" && split_filter[1] != "*" && split_filter[2] == "*") {
+      return false
+    } else {
+      return true
+    }
+  } else {
+    return false;
+  }
+}
+
+function bar_mouseOver() {
+    let tooltip = document.getElementById("tooltip");
+    tooltip.innerText = this.dataset.name + ": " + this.dataset.count;
+    this.classList.add("active");
+}
+function bar_mouseOut() {
+    let tooltip = document.getElementById("tooltip");
+    tooltip.innerText = "";
+    this.classList.remove("active");
+}
+function bar_click() {
+    window.location.href = "?d=" + this.dataset.name + "-*";
+}
+
 // Main
 document_ready(function() {
     console.log("Ready");
@@ -174,10 +270,22 @@ document_ready(function() {
     if (url_params.has("d")) {
         filter["d"] = url_params.get("d");
         document.getElementById("date_filter").value = url_params.get("d");
+    } else {
+        let cur_date = new Date(Date.now());
+        document.getElementById("date_filter").value = "*-" + String(cur_date.getMonth()+1).padStart(2, 0) + "-" + String(cur_date.getDate()).padStart(2, 0);
     }
     
     var tweets = prep_tweets(filter);
-    document.getElementById("info").innerHTML = "There are " + Object.keys(tweets).length + " tweets matching the filter.";
+    if (!hide_bars(filter)) {
+      make_bars(tweets, filter);
+    } else {
+      document.getElementById("bars").remove();
+    }
+    if (url_params.has("d") || url_params.has("q")) {
+        document.getElementById("info").innerHTML = "Found " + Object.keys(tweets).length + " tweets matching the filter.";
+    } else {
+        document.getElementById("info").innerHTML = "Found " + Object.keys(tweets).length + " tweets.";
+    }
     
     let nav_href = [];
     if (url_params.has("d")) {

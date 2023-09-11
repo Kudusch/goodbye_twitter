@@ -5,7 +5,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <title>A Basic HTML5 Template</title>
+  <title>Tweets</title>
   <meta name="description" content="A simple HTML5 Template for new projects.">
   <meta name="author" content="SitePoint">
 
@@ -25,15 +25,22 @@
 <body>
   <header><a href="?p=1"></a></header>
   <main>
-    <form>
-      <input type="text" name="q" id="query_filter"/>
-      <input type="submit" value="Search"/>
-    </form>
-    <form>
-      <input type="text" name="d" id="date_filter"/>
-      <input type="submit" value="Date"/>
-    </form>
+    <div id="filter">
+      <h2>Filter</h2>
+      <form>
+        <label>Search tweets</label><br>
+        <input type="text" name="q" id="query_filter"/><br>
+        <input type="submit" value="Search"/><br>
+      </form>
+      <form>
+        <label>Filter by date</label><br>
+        <input type="text" name="d" id="date_filter"/><br>
+        <input type="submit" value="Date"/><br>
+      </form>
+    </div>
     <p id="info"></p>
+    <div id="bars"></div>
+    <div id="tooltip"></div>
     <div id="tweets"></div>
   </main>
   <nav>
