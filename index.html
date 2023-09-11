@@ -1,6 +1,7 @@
 <!doctype html>
 
 <html lang="en">
+
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -16,7 +17,9 @@
 
   <!-- Load data -->
   <script type="text/javascript">
-    window.YTD = {"tweets":{}};
+    window.YTD = {
+      "tweets": {}
+    };
   </script>
   <script src="data/tweets.js"></script>
   <script src="js/config.js"></script>
@@ -29,13 +32,13 @@
       <h2>Filter</h2>
       <form>
         <label>Search tweets</label><br>
-        <input type="text" name="q" id="query_filter"/><br>
-        <input type="submit" value="Search"/><br>
+        <input type="text" name="q" id="query_filter" /><br>
+        <input type="submit" value="Search" /><br>
       </form>
       <form>
         <label>Filter by date</label><br>
-        <input type="text" name="d" id="date_filter"/><br>
-        <input type="submit" value="Date"/><br>
+        <input type="text" name="d" id="date_filter" /><br>
+        <input type="submit" value="Date" /><br>
       </form>
     </div>
     <p id="info"></p>
@@ -44,11 +47,12 @@
     <div id="tweets"></div>
   </main>
   <nav>
-    <p><a id="prev_page"><-</a></p>
+    <p><a id="prev_page"><-< /a></p>
     <p> <span id="cur_page"></span> / <span id="max_page"></span></p>
     <p><a id="next_page">-></a></p>
   </nav>
   <footer>Footer</footer>
   <script src="js/main.js"></script>
 </body>
+
 </html>

@@ -2,7 +2,7 @@
 	--tweets: 64, 176, 202;
 	--links: 0, 100, 242;
 	--text: 0, 40, 50;
-	
+
 }
 
 body {
@@ -73,7 +73,7 @@ a {
 /* Tweet text */
 .tweet p:first-child {
 	width: 100%;
-	background-color: rgba(var(--tweets), 1); 
+	background-color: rgba(var(--tweets), 1);
 }
 
 /* Tweet meta */
