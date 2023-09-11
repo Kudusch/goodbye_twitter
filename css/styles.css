@@ -1,14 +1,92 @@
+:root {
+	--tweets: 64, 176, 202;
+	--links: 0, 100, 242;
+	--text: 0, 40, 50;
+	
+}
+
 body {
 	max-width: 700px;
 	margin: auto;
+	color: rgba(var(--text), 1);
 }
 
-article {
-	background-color: pink;
+a {
+	color: rgba(var(--links), 1);
 }
+
+#filter {
+	display: flex;
+	justify-content: space-around;
+	flex-wrap: wrap;
+	background-color: red;
+	padding: 10px;
+}
+
+#filter h2 {
+	width: 100%;
+	margin-top: 0;
+	margin-bottom: 10px;
+}
+
+#filter form {
+	flex: 1;
+}
+
+#bars {
+	height: 200px;
+	display: flex;
+	margin-bottom: 20px;
+	align-items: flex-end;
+}
+
+.bar {
+	background-color: red;
+	opacity: .5;
+	border: 1px solid black;
+}
+
+.active {
+	opacity: 1;
+}
+
+#tweets {}
 
 .tweet {
-	
+	background-color: rgba(var(--tweets), .5);
+	display: flex;
+	justify-content: space-between;
+	flex-wrap: wrap;
+	margin-bottom: 10px;
+	line-height: 1.5;
+}
+
+.tweet p {
+	margin-top: 0;
+	margin-bottom: 0;
+	padding-left: 10px;
+	padding-right: 10px;
+	padding-top: 5px;
+	padding-bottom: 5px;
+}
+
+/* Tweet text */
+.tweet p:first-child {
+	width: 100%;
+	background-color: rgba(var(--tweets), 1); 
+}
+
+/* Tweet meta */
+.tweet p:not(:first-child) {
+	flex: 1;
+}
+
+.datetime {
+	text-align: right;
+}
+
+.tweet img {
+	width: 100%;
 }
 
 .retweet {
