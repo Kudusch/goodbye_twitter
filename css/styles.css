@@ -126,9 +126,34 @@ nav {
 	padding-right: 20px;
 }
 
+#tod {
+	height: 200px;
+	display: flex;
+	margin-bottom: 20px;
+	align-items: flex-end;
+	flex-direction: row;
+}
+
+.tod_bar {
+	border: 1px solid black;
+	vertical-align: bottom;
+	text-align: center;
+	
+	display: flex;
+	align-items: flex-end;
+	justify-content: center;
+}
+
+.tod_bar span {
+	transform: translateY(15px);
+}
+
+
 #tables {
 	display: flex;
 	justify-content: space-around;
+	margin-top: 20px;
+	margin-bottom: 20px;
 }
 .insight_table {
 	border-collapse: collapse;

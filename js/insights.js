@@ -101,6 +101,59 @@ function get_metrics(tweets) {
     return {"total_favs":total_favs, "total_retweets":total_retweets, "top_fav":top_fav, "top_rt":top_rt};
 }
 
+function get_top_words(tweets) {
+  let all_words = tweets.map(tweet => {
+    return tweet.tweet.full_text.toLowerCase().replace(/(?:https?|ftp):\/\/[\n\S]+/g, '').split(/[^a-z0-9üöäß]/);
+  }).flat().filter(token => {
+    if (token.match(/[0-9\s]/) || token == "") {
+      return false;
+    } else {
+      return true;
+    }
+  });
+  let counts = {};
+  all_words.forEach(el => {
+    counts[el] = (counts[el] || 0) + 1;
+  });
+  var tokens = Object.keys(counts).map(function(key) {
+    return [key, counts[key]];
+  });
+  return tokens.sort(function(a, b) {
+    return b[1] - a[1];
+  });
+  return tokens;
+}
+
+function get_tod(tweets) {
+  var collator = new Intl.Collator(undefined, {numeric: true, sensitivity: 'base'});
+  
+    let all_hours = tweets.map(tweet => {
+      let d = new Date(tweet.tweet.created_at);
+      return String((d.getHours()+utc_offset)%24).padStart(2, 0);
+      });
+    var counts = {};
+    all_hours.forEach(el => {
+      counts[el.toLowerCase()] = (counts[el.toLowerCase()] || 0) + 1;
+    })
+    var hours = Object.keys(counts).map(function(key) {
+      return [key, counts[key]];
+    }).sort();
+    
+    let all_minutes = tweets.map(tweet => {
+      let d = new Date(tweet.tweet.created_at);
+      return String(d.getMinutes()).padStart(2, 0);
+      });
+    var counts = {};
+    all_minutes.forEach(el => {
+      counts[el.toLowerCase()] = (counts[el.toLowerCase()] || 0) + 1;
+    });
+    var minutes = Object.keys(counts).map(function(key) {
+      return [key, counts[key]];
+    }).sort();
+    
+    return([hours, minutes]);
+}
+
 // Main
 document_ready(function() {
   console.log("Ready");
@@ -144,4 +197,32 @@ document_ready(function() {
   tweets_to_html(metrics.top_rt).forEach(function(item) {
     document.getElementById("top_rt").appendChild(item);
   });
+  
+  let top_words = document.getElementById("top_words");
+  get_top_words(tweets).slice(0, 50).forEach(token => {
+    let bubble = document.createElement("div");
+    bubble.innerText = token[0];
+    bubble.dataset.count = token[1];
+    bubble.style = "font-size: " + token[1]/100 + "pt;";
+    top_words.append(bubble);
+  })
+  
+  let time_counts = get_tod(tweets);
+  let max_count = Math.max(...time_counts[0].map(x => x[1]));
+  time_counts[0].forEach(entry => {
+    const [key, value] = entry;
+    var bar = document.createElement("div");
+    bar.style = "height:" + (value / max_count) * 100 + "%; width: " + (1 / time_counts[0].length) * 100 + "%;";
+    bar.classList.add("tod_bar");
+    bar.dataset.name = key;
+    bar.dataset.count = value;
+    bar.innerHTML = "<span>" + key + "</span>";
+    tod.append(bar);
+  });
+  
+  
+  let info_text = document.getElementById("info");
+  let p = document.createElement("p");
+  p.innerHTML = "Your tweets received a total of <b>" + metrics.total_favs + " favourites</b> and <b>" + metrics.total_retweets + " retweets</b>.";
+  info_text.append(p);
 });
