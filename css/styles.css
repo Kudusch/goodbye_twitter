@@ -54,7 +54,7 @@ a {
 
 #tweets {}
 
-.tweet {
+.tweet, .reply {
 	background-color: rgba(var(--tweets), .5);
 	display: flex;
 	justify-content: space-between;
@@ -62,8 +62,7 @@ a {
 	margin-bottom: 10px;
 	line-height: 1.5;
 }
-
-.tweet p {
+.tweet p, .reply p {
 	margin-top: 0;
 	margin-bottom: 0;
 	padding-left: 10px;
@@ -73,22 +72,22 @@ a {
 }
 
 /* Tweet text */
-.tweet p:first-child {
+.tweet p:first-child, .reply p:first-child {
 	width: 100%;
 	background-color: rgba(var(--tweets), 1);
 }
 
 /* Tweet meta */
-.tweet p:not(:first-child) {
+.tweet p:not(:first-child), .reply p:not(:first-child) {
 	flex: 1;
 	width: 30%;
-	text-align: center;
 }
 
 .meta {
 	display: flex;
 	justify-content: center;
 	column-gap: 12px;
+	text-align: center;
 }
 .favorite_count, .retweet_count {
 	display: flex;
@@ -112,7 +111,7 @@ a {
 	text-align: right;
 }
 
-.tweet img {
+.tweet img, .reply img {
 	width: 100%;
 }
 

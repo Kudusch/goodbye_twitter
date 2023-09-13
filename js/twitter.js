@@ -61,6 +61,10 @@ function tweet_to_html(tweet) {
     article.classList.add("retweet");
     tweet_text.innerHTML = full_text.split(": ")[1];
     tweet_author.innerText = "@" + full_text.split(": ")[0].substring(4);
+  } else if ("in_reply_to_status_id_str" in tweet) {
+    article.classList.add("reply");
+    tweet_text.innerHTML = full_text;
+    tweet_author.innerHTML = "In reply to <a href='https://twitter.com/" + tweet.in_reply_to_screen_name + "/statuses/" + tweet.in_reply_to_status_id_str + "'>@" + tweet.in_reply_to_screen_name + "</a>";
   } else {
     article.classList.add("tweet");
     tweet_text.innerHTML = full_text;
