@@ -43,7 +43,7 @@ function enrich_text(tweet) {
   let entities = parse_entities(tweet);
   let text = tweet.full_text;
   entities.forEach(function(item) {
-    text = text.substring(0, item.start + offset) + item.replacement + text.substring(item.end + offset);
+    text = Array.from(text).slice(0, item.start + offset).join("") + item.replacement + Array.from(text).slice(item.end + offset).join("");
     offset += item.replacement.length - item.len;
   });
   return text;
@@ -69,12 +69,12 @@ function tweet_to_html(tweet) {
 
   tweet_time.innerHTML = "<a href='https://twitter.com/" + user_name + "/statuses/" + tweet.id_str + "'>" + as_datetime(tweet.created_at) + "</a>";
   tweet_time.classList.add("datetime");
-  // tweet_meta.innerText = tweet.id_str;
-  // tweet_meta.classList.add("meta");
+  tweet_meta.innerHTML = "<div class='favorite_count'><div>" + tweet.favorite_count + "</div><div class='fav_icon'></div></div> <div class='favorite_count'><div>" + tweet.retweet_count + "</div><div class='rt_icon'></div></div>";
+  tweet_meta.classList.add("meta");
   article.append(tweet_text);
   article.append(tweet_author);
+  article.append(tweet_meta);
   article.append(tweet_time);
-  // article.append(tweet_meta);
   return article;
 }
 
