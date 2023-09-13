@@ -88,6 +88,10 @@ function make_bars(tweets, filter) {
 			var all_dates = tweets.map(function(tweet) {
 				return as_hh(tweet.tweet.created_at);
 			});
+		} else {
+			let bars = document.getElementById("bars");
+			bars.style = "display: none;";
+			return
 		}
 	} else {
 		var all_dates = tweets.map(function(tweet) {
