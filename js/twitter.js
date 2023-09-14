@@ -17,10 +17,42 @@ function parse_entities(tweet) {
           } else if (key == "hashtags") {
             parsed_entity.replacement = "<a href='?q=%23" + entity.text + "'>#" + entity.text + "</a>";
           } else if (key == "media") {
-            parsed_entity.replacement = "<img src='data/tweets_media/" + tweet.id + "-" + entity.media_url.split("/").slice(-1) + "'>";
+              parsed_entity.replacement = "<img src='data/tweets_media/" + tweet.id + "-" + entity.media_url.split("/").slice(-1) + "'>";
           } else if (key == "user_mentions") {
             parsed_entity.replacement = "<a href='https://twitter.com/" + entity.screen_name + "'>@" + entity.screen_name + "</a>";
           }
+          raw_entities.push(parsed_entity);
+        });
+      }
+    });
+  }
+  if ("extended_entities" in tweet) {
+    Object.entries(tweet.extended_entities).forEach(function(item) {
+      let key = item[0];
+      let entities = item[1];
+      if (entities.length != 0) {
+        entities.forEach(function(entity) {
+          let parsed_entity = {
+            "start": parseInt(entity.indices[0]),
+            "end": parseInt(entity.indices[1]),
+            "len": parseInt(entity.indices[1]) - parseInt(entity.indices[0])
+          };
+          if (key == "urls") {
+            parsed_entity.replacement = "<a href='" + entity.expanded_url + "'>" + entity.display_url + "</a>";
+          } else if (key == "hashtags") {
+            parsed_entity.replacement = "<a href='?q=%23" + entity.text + "'>#" + entity.text + "</a>";
+          } else if (key == "media") {
+            if (entity.type == "animated_gif" || entity.type == "video") {
+              parsed_entity.replacement = "<br><video autoplay loop muted><source src='" + entity.video_info.variants[0].url + "' type='" + entity.video_info.variants[0].content_type + "' /></video>";
+            } else {
+              parsed_entity.replacement = "<img src='data/tweets_media/" + tweet.id + "-" + entity.media_url.split("/").slice(-1) + "'>";
+            }
+          } else if (key == "user_mentions") {
+            parsed_entity.replacement = "<a href='https://twitter.com/" + entity.screen_name + "'>@" + entity.screen_name + "</a>";
+          }
+          raw_entities = raw_entities.filter(entry => {
+            return (entry.start != parsed_entity.start && entry.end != parsed_entity.end)
+          });
           raw_entities.push(parsed_entity);
         });
       }
