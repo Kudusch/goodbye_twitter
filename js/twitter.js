@@ -43,7 +43,8 @@ function parse_entities(tweet) {
             parsed_entity.replacement = "<a href='?q=%23" + entity.text + "'>#" + entity.text + "</a>";
           } else if (key == "media") {
             if (entity.type == "animated_gif" || entity.type == "video") {
-              parsed_entity.replacement = "<br><video autoplay loop muted><source src='" + entity.video_info.variants[0].url + "' type='" + entity.video_info.variants[0].content_type + "' /></video>";
+              let media_file = tweet.id_str + "-" + entity.video_info.variants.sort((a, b) => {return(b.bitrate - a.bitrate)})[0].url.split("/").slice(-1)[0].split("?")[0];
+              parsed_entity.replacement = "<br><video autoplay loop muted><source src='data/tweets_media/" + media_file + "' type='" + entity.video_info.variants[entity.video_info.variants.length-1].content_type + "' /></video>";
             } else {
               parsed_entity.replacement = "<img src='data/tweets_media/" + tweet.id + "-" + entity.media_url.split("/").slice(-1) + "'>";
             }
