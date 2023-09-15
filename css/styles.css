@@ -74,6 +74,7 @@ a {
 
 .bar {
 	background-color: var(--tweet);
+	margin-right: 1px;
 }
 
 #tooltip {
@@ -243,9 +244,9 @@ nav p {
 }
 
 .tod_bar {
-	border: 1px solid black;
 	vertical-align: bottom;
 	text-align: center;
+	margin-right: 1px;
 
 	display: flex;
 	align-items: flex-end;
@@ -281,6 +282,11 @@ nav p {
 	border-bottom: 1px solid black;
 }
 
+#info {
+	width: 100% !important;
+	padding: 5px;
+}
+
 #top_tweets {
 	display: flex;
 	justify-content: space-between;
@@ -288,16 +294,14 @@ nav p {
 	background-color: var(--bg);
 }
 
-#top_fav,
-#top_rt {
+#top_rt, #top_fav {
 	width: 50%;
 	padding: 5px;
 	flex: 1;
-	height: 400px;
-	overflow: scroll;
 }
 
-#info {
-	width: 100% !important;
-	padding: 5px;
+#top_rt_tweets,
+#top_fav_tweets {
+	height: 500px;
+	overflow: scroll;
 }

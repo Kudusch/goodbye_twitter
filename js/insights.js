@@ -190,10 +190,10 @@ document_ready(function() {
   
   let metrics = get_metrics(tweets);
   tweets_to_html(metrics.top_fav).forEach(function(item) {
-    document.getElementById("top_fav").appendChild(item);
+    document.getElementById("top_fav_tweets").appendChild(item);
   });
   tweets_to_html(metrics.top_rt).forEach(function(item) {
-    document.getElementById("top_rt").appendChild(item);
+    document.getElementById("top_rt_tweets").appendChild(item);
   });
   
   let time_counts = get_tod(tweets);
