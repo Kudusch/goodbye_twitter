@@ -10,10 +10,24 @@ function document_ready(callback) {
     if (document.readyState == 'complete') callback();
   });
 }
-
 // Main
 document_ready(function() {
   console.log("Ready");
+  
+  var coll = document.getElementsByClassName("collapsible");
+  var i;
+  for (i = 0; i < coll.length; i++) {
+    coll[i].addEventListener("click", function() {
+      this.classList.toggle("active");
+      var content = this.nextElementSibling;
+      if (content.style.display === "flex") {
+        content.style.display = "none";
+      } else {
+        content.style.display = "flex";
+      }
+    });
+  }
+
 
   const url_params = new URLSearchParams(window.location.search);
   if (url_params.has("p")) {
@@ -63,7 +77,7 @@ document_ready(function() {
   document.getElementById("max_page").innerHTML = Math.ceil(tweets.length / tweets_per_page);
 
   document.title = "Indexing " + Object.keys(tweets).length + " Tweets by " + user_name;
-  document.getElementById("top_link").children[0].innerText = "Indexing " + Object.keys(tweets).length + " Tweets by " + user_name;
+  document.getElementById("top_link").children[0].innerText = "Tweets by " + user_name;
 
   let start_slice = (current_page - 1) * tweets_per_page;
   let end_slice = (current_page) * tweets_per_page;

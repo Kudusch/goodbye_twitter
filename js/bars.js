@@ -1,3 +1,5 @@
+const month_names = [ "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December" ];
+
 function as_ym(s) {
 	let d = new Date(s);
 	return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, 0);
@@ -58,13 +60,19 @@ function year_month_from_filter(filter) {
 /* Bar Events */
 function bar_mouseOver() {
 	let tooltip = document.getElementById("tooltip");
-	tooltip.innerText = this.dataset.name + ": " + this.dataset.count;
+	if (this.dataset.type == "all") {
+		tooltip.innerText = this.dataset.count + " tweets posted during " + month_names[parseInt(this.dataset.name.split("-")[1])] + " " + this.dataset.name.split("-")[0];
+	} else if (this.dataset.type == "month") {
+		tooltip.innerText = this.dataset.count + " tweets posted on " + this.dataset.name;
+	} else {
+		tooltip.innerText = this.dataset.count + " tweets posted at " + this.dataset.name + ":00 h";
+	}
 	this.classList.add("active");
 }
 
 function bar_mouseOut() {
 	let tooltip = document.getElementById("tooltip");
-	tooltip.innerText = "";
+	tooltip.innerHTML = "&nbsp;";
 	this.classList.remove("active");
 }
 
@@ -99,7 +107,6 @@ function make_bars(tweets, filter) {
 		});
 		var type = "all";
 	}
-	console.log(type);
 
 	let bar_counts = {};
 	all_dates.forEach(el => {
@@ -138,7 +145,14 @@ function make_bars(tweets, filter) {
 	let max_count = Object.values(bar_counts).reduce((a, b) => Math.max(a, b), -Infinity);
 
 	let bars = document.getElementById("bars");
+	n = 0;
 	Object.keys(bar_counts).sort().forEach(k => {
+		if (n==0) {
+			document.getElementById("min_bar").innerText = k;
+		} else if (n == Object.keys(bar_counts).length-1) {
+			document.getElementById("max_bar").innerText = k; 
+		}
+		n += 1;
 		var bar = document.createElement("div");
 		bar.style = "height:" + (bar_counts[k] / max_count) * 100 + "%; width: " + (1 / Object.keys(bar_counts).length) * 100 + "%;";
 		bar.classList.add("bar");

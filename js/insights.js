@@ -125,11 +125,9 @@ function get_top_words(tweets) {
 }
 
 function get_tod(tweets) {
-  var collator = new Intl.Collator(undefined, {numeric: true, sensitivity: 'base'});
-  
     let all_hours = tweets.map(tweet => {
       let d = new Date(tweet.tweet.created_at);
-      return String((d.getHours()+utc_offset)%24).padStart(2, 0);
+      return String((d.getHours() + (utc_offset % 24) + 24) % 24).padStart(2, 0);
       });
     var counts = {};
     all_hours.forEach(el => {
@@ -198,15 +196,6 @@ document_ready(function() {
     document.getElementById("top_rt").appendChild(item);
   });
   
-  let top_words = document.getElementById("top_words");
-  get_top_words(tweets).slice(0, 50).forEach(token => {
-    let bubble = document.createElement("div");
-    bubble.innerText = token[0];
-    bubble.dataset.count = token[1];
-    bubble.style = "font-size: " + token[1]/100 + "pt;";
-    top_words.append(bubble);
-  })
-  
   let time_counts = get_tod(tweets);
   let max_count = Math.max(...time_counts[0].map(x => x[1]));
   time_counts[0].forEach(entry => {
@@ -219,7 +208,6 @@ document_ready(function() {
     bar.innerHTML = "<span>" + key + "</span>";
     tod.append(bar);
   });
-  
   
   let info_text = document.getElementById("info");
   let p = document.createElement("p");

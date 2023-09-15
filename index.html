@@ -33,30 +33,34 @@
     <a href="insights.html">Insights</a>
   </header>
   <main>
+    <div id="bars"></div>
+    <div id="bars-info">
+      <div id="min_bar"></div>
+      <div id="tooltip">&nbsp;</div>
+      <div id="max_bar"></div>
+    </div>
+    <button type="button" class="collapsible">Filter</button>
     <div id="filter">
-      <h2>Filter</h2>
       <form>
         <label>Search tweets</label><br>
-        <input type="text" name="q" id="query_filter" /><br>
+        <input type="text" name="q" id="query_filter" />
         <input type="submit" value="Search" /><br>
       </form>
       <form>
         <label>Filter by date</label><br>
-        <input type="text" name="d" id="date_filter" /><br>
+        <input type="text" name="d" id="date_filter" />
         <input type="submit" value="Date" /><br>
       </form>
     </div>
     <p id="info"></p>
-    <div id="bars"></div>
-    <div id="tooltip"></div>
     <div id="tweets"></div>
   </main>
   <nav>
-    <p><a id="prev_page"><-</a></p>
+    <a id="prev_page"><div></div></a>
     <p> <span id="cur_page"></span> / <span id="max_page"></span></p>
-    <p><a id="next_page">-></a></p>
+    <a id="next_page"><div></div></a>
   </nav>
-  <footer>Footer</footer>
+  <footer>Made by Kudusch</footer>
   <script src="js/main.js"></script>
 </body>
 
