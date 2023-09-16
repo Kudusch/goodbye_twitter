@@ -48,12 +48,22 @@ document_ready(function() {
     let cur_date = new Date(Date.now());
     document.getElementById("date_filter").value = "*-" + String(cur_date.getMonth() + 1).padStart(2, 0) + "-" + String(cur_date.getDate()).padStart(2, 0);
   }
+  if (url_params.has("id")) {
+    filter["id"] = url_params.get("id");
+  }
 
   var tweets = prep_tweets(filter);
   make_bars(tweets, filter);
 
   if (url_params.has("d") || url_params.has("q")) {
     document.getElementById("info").innerHTML = "Found " + Object.keys(tweets).length + " tweets matching the filter.";
+  } else if (url_params.has("id")) {
+    document.getElementById("info").style.display = "none";
+    document.getElementById("bars").style.display = "none";
+    document.getElementById("bars-info").style.display = "none";
+    document.getElementById("filter").style.display = "none";
+    document.getElementById("filter_button").style.display = "none";
+    document.getElementsByTagName("nav")[0].style.display = "none";
   } else {
     document.getElementById("info").innerHTML = "Found " + Object.keys(tweets).length + " tweets.";
   }
@@ -77,7 +87,6 @@ document_ready(function() {
   document.getElementById("max_page").innerHTML = Math.ceil(tweets.length / tweets_per_page);
 
   document.title = "Indexing " + Object.keys(tweets).length + " Tweets by " + user_name;
-  document.getElementById("top_link").children[0].innerText = "Tweets by " + user_name;
 
   let start_slice = (current_page - 1) * tweets_per_page;
   let end_slice = (current_page) * tweets_per_page;

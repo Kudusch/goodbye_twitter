@@ -104,7 +104,7 @@ function tweet_to_html(tweet) {
     tweet_author.innerText = "Posted by @" + user_name;
   }
 
-  tweet_time.innerHTML = "<a href='https://twitter.com/" + user_name + "/statuses/" + tweet.id_str + "'>" + as_datetime(tweet.created_at) + "</a>";
+  tweet_time.innerHTML = "<a href='https://twitter.com/" + user_name + "/statuses/" + tweet.id_str + "'>" + as_datetime(tweet.created_at) + "</a> <span><a href='index.html?id=" + tweet.id_str + "'>🔗</a></span>";
   tweet_time.classList.add("datetime");
   tweet_meta.innerHTML = "<div class='favorite_count'><div>" + tweet.favorite_count + "</div><div class='fav_icon'></div></div> <div class='favorite_count'><div>" + tweet.retweet_count + "</div><div class='rt_icon'></div></div>";
   tweet_meta.classList.add("meta");
@@ -112,6 +112,7 @@ function tweet_to_html(tweet) {
   article.append(tweet_author);
   article.append(tweet_meta);
   article.append(tweet_time);
+  article.dataset.id = tweet.id_str;
   return article;
 }
 
@@ -126,20 +127,6 @@ function tweets_to_html(tweets) {
 
 function prep_tweets(filter) {
   let tweets = window.YTD.tweets.part0;
-  if (sort_direction == "asc") {
-    tweets.sort(function(a, b) {
-      let a_time = Date.parse(a["tweet"]["created_at"]);
-      let b_time = Date.parse(b["tweet"]["created_at"]);
-      return a_time - b_time;
-    });
-  } else if (sort_direction == "desc") {
-    tweets.sort(function(a, b) {
-      let a_time = Date.parse(a["tweet"]["created_at"]);
-      let b_time = Date.parse(b["tweet"]["created_at"]);
-      return b_time - a_time;
-    });
-  }
-
   if (!include_retweets) {
     tweets = tweets.filter(function(tweet) {
       return !tweet["tweet"]["full_text"].startsWith("RT @");
@@ -151,6 +138,12 @@ function prep_tweets(filter) {
     });
   }
   if (Object.keys(filter).length != 0) {
+    if ("id" in filter) {
+      tweets = tweets.filter(function(tweet) {
+        return tweet.tweet.id_str == filter.id;
+      })
+      return tweets;
+    }
     if ("q" in filter) {
       tweets = tweets.filter(function(tweet) {
         return tweet["tweet"]["full_text"].toLowerCase().includes(filter.q.toLowerCase());
@@ -179,6 +172,19 @@ function prep_tweets(filter) {
         }
       });
     }
+  }
+  if (sort_direction == "asc") {
+    tweets.sort(function(a, b) {
+      let a_time = Date.parse(a["tweet"]["created_at"]);
+      let b_time = Date.parse(b["tweet"]["created_at"]);
+      return a_time - b_time;
+    });
+  } else if (sort_direction == "desc") {
+    tweets.sort(function(a, b) {
+      let a_time = Date.parse(a["tweet"]["created_at"]);
+      let b_time = Date.parse(b["tweet"]["created_at"]);
+      return b_time - a_time;
+    });
   }
   return tweets;
 }
