@@ -1,18 +1,18 @@
 :root {
 	--tweet: rgb(64, 176, 202);
 	--tweet-accent: rgb(137, 220, 239);
-	--reply: rgb(163, 202, 64);
-	--reply-accent: rgb(210, 239, 137);
-	--links: rgb(53, 97, 160);
+	--reply: rgb(121, 163, 14);
+	--reply-accent: rgb(186, 235, 64);
+	--accent: rgb(252, 185, 101);
+	--link: rgb(128, 46, 195);
+	--link-accent: rgb(76, 0, 138);
 	--text: rgb(0, 40, 50);
 	--bg: rgb(167, 186, 194)
 }
-
 body {
-	max-width: 700px;
-	margin: auto;
+	padding: 0;
+	margin: 0;
 	color: var(--text);
-
 	background-color: rgba(241, 241, 241, .5);
 
 	font-family: "Gill Sans";
@@ -20,11 +20,40 @@ body {
 }
 
 a {
-	color: var(--links);
+	color: var(--link);
 }
 
-#top_link a {
+header h1 a {
+	color: var(--link-accent);
+}
+header a {
 	text-decoration: none;
+}
+
+header {
+	display: flex;
+	align-items: baseline;
+	background-color: var(--bg);
+	margin-bottom: 20px;
+	gap: 0;
+}
+
+header h1, header h2 {
+	font-size: 1rem;
+	padding-left: 10px;
+	padding-right: 10px;
+	margin-top: 10px;
+	margin-bottom: 10px;
+	border-right: 2px dotted var(--link-accent);
+}
+
+header h1:last-child, header h2:last-child {
+	border-right: none;
+}
+
+main {
+	max-width: 700px;
+	margin: auto;
 }
 
 .collapsible {
@@ -47,7 +76,7 @@ a {
 	justify-content: space-between;
 	flex-wrap: wrap;
 	padding: 10px;
-	background-color: var(--tweet-accent);
+	background-color: var(--accent);
 }
 
 #filter h2 {
@@ -225,14 +254,14 @@ nav p {
 	height: 20px;
 	width: 20px;
 	mask-image: url(../img/arrow-right.svg);
-	background: var(--links);
+	background: var(--link);
 }
 
 #prev_page div {
 	height: 20px;
 	width: 20px;
 	mask-image: url(../img/arrow-left.svg);
-	background: var(--links);
+	background: var(--link);
 }
 
 #tod {
@@ -304,4 +333,20 @@ nav p {
 #top_fav_tweets {
 	height: 500px;
 	overflow: scroll;
+}
+
+#larger {
+	position: fixed; /* Floating above */
+	transition: transform 0.23s; /* Sticking effect */
+	transition: opacity .1s ease-in;
+	pointer-events: none; /* Allow clicking trough the div */
+	display: none;
+	
+	border: 4px double var(--accent);
+	box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+}
+
+#larger img {
+	width: 500px;
+	height: auto;
 }
