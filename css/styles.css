@@ -17,6 +17,10 @@ body {
 
 	font-family: "Gill Sans";
 	font-size: 1.2rem;
+	
+	min-height: 100vh; 
+	display: grid;
+	grid-template-rows: auto 1fr auto;
 }
 
 a {
@@ -54,6 +58,7 @@ header h1:last-child, header h2:last-child {
 main {
 	max-width: 700px;
 	margin: auto;
+	padding-bottom: 100px;
 }
 
 .collapsible {
@@ -349,4 +354,9 @@ nav p {
 #larger img {
 	width: 500px;
 	height: auto;
+}
+
+footer {
+	font-size: 0.8rem;
+	color: var(--bg);
 }
