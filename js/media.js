@@ -1,6 +1,7 @@
 "use strict";
 
-var cursor = {x:0, y:0};
+var max_slice = 0;
+var tweets = [];
 
 function document_ready(callback) {
   // in case the document is already rendered
@@ -45,23 +46,54 @@ function gallery_click() {
     window.location.href = "index.html?id=" + this.dataset.id;
 }
 
+function get_media(tweets) {
+//function get_media(tweets, start, stop) {
+    //let media_tweets = tweets.slice(start, stop).filter(tweet => {
+    let media_tweets = tweets.filter(tweet => {
+      tweet = tweet.tweet;
+      if ("entities" in tweet) {
+        if ("media" in tweet.entities) {
+          if (tweet.entities.media.length > 0) {
+            return true;
+        }
+      }
+    }
+      return false;
+    });
+    return media_tweets;
+}
+
+function load_more() {
+    let media_tweets = get_media(tweets, max_slice, max_slice+100);
+    max_slice += 100
+    
+    tweets_to_html(media_tweets).forEach(function(item) {
+      let img = item.children[0].getElementsByTagName("img")[0];
+      if (img) {
+        var media = document.createElement("div");
+        media.classList.add("mm-columns__item");
+        media.classList.add("media");
+        img.classList.add("mm-columns__img");
+        media.appendChild(img);
+        media.onmouseover = gallery_mouseOver;
+        media.onmouseout = gallery_mouseOut;
+        media.onmousemove = gallery_mouseMove;
+        media.onclick = gallery_click;
+        media.dataset.id = item.dataset.id;
+        document.getElementById("gallery").appendChild(media);
+        }
+    });
+}
+
 document_ready(function() {
   console.log("Ready");
 
-  var tweets = prep_tweets({});
+  tweets = prep_tweets({});
   make_bars(tweets, {});
   
-  let media_tweets = tweets.slice(1, 100).filter(tweet => {
-    tweet = tweet.tweet;
-    if ("entities" in tweet) {
-      if ("media" in tweet.entities) {
-        if (tweet.entities.media.length > 0) {
-          return true;
-      }
-    }
-  }
-    return false;
-  });
+  let media_tweets = get_media(tweets);
+  //let media_tweets = get_media(tweets, max_slice, max_slice+100);
+  //max_slice += 100
   
   tweets_to_html(media_tweets).forEach(function(item) {
     let img = item.children[0].getElementsByTagName("img")[0];
@@ -79,14 +111,5 @@ document_ready(function() {
       document.getElementById("gallery").appendChild(media);
       }
   });
-  
-  const mmMasonryItems = document.querySelectorAll('.js-mm-masonry .mm-masonry__item')
-  
-  mmMasonryItems.forEach((item) => {
-    const img = item.querySelector('.mm-masonry__img')
-    img.addEventListener('load', () => {
-      item.style.setProperty('--w', img.naturalWidth)
-      item.style.setProperty('--h', img.naturalHeight)
-    })
-  })
+
 });

@@ -1,21 +1,22 @@
 :root {
-	--tweet: rgb(64, 176, 202);
+	--tweet: rgb(39, 118, 136);
 	--tweet-accent: rgb(137, 220, 239);
-	--reply: rgb(121, 163, 14);
+	--reply: rgb(86, 117, 7);
 	--reply-accent: rgb(186, 235, 64);
 	--accent: rgb(252, 185, 101);
 	--link: rgb(128, 46, 195);
 	--link-accent: rgb(76, 0, 138);
 	--text: rgb(0, 40, 50);
-	--bg: rgb(167, 186, 194)
+	--bg: rgb(167, 186, 194);
+	--light-bg: rgba(241, 241, 241, 1);
 }
 body {
 	padding: 0;
 	margin: 0;
 	color: var(--text);
-	background-color: rgba(241, 241, 241, .5);
+	background-color: var(--light-bg);
 
-	font-family: "Gill Sans";
+	font-family: "Roboto", "Gill Sans", sans-serif;
 	font-size: 1.2rem;
 	
 	min-height: 100vh; 
@@ -25,35 +26,61 @@ body {
 
 a {
 	color: var(--link);
+	text-decoration: none;
 }
 
-header h1 a {
-	color: var(--link-accent);
-}
-header a {
-	text-decoration: none;
+a:hover {
+	text-decoration: underline;
 }
 
 header {
 	display: flex;
 	align-items: baseline;
+	font-family: "Archivo";
 	background-color: var(--bg);
-	margin-bottom: 20px;
+	margin-bottom: 0;
 	gap: 0;
+	font-size: 2rem;
+}
+
+header h1 a {
+	color: var(--text);
+}
+header h2 a {
+	color: var(--text);
+	opacity: .8;
+}
+header a {
+	text-decoration: none;
+}
+header a:hover {
+	text-decoration: none;
+	opacity: 1;
 }
 
 header h1, header h2 {
-	font-size: 1rem;
+	font-size: 1.8rem;
 	padding-left: 10px;
 	padding-right: 10px;
 	margin-top: 10px;
 	margin-bottom: 10px;
-	border-right: 2px dotted var(--link-accent);
+	border-right: 2px dotted var(--text);
 }
 
 header h1:last-child, header h2:last-child {
 	border-right: none;
 }
+
+#info {
+	padding-top: 10px;
+	padding-bottom: 10px;
+	background-color: var(--bg);
+	margin-top: 0px;
+	margin-bottom: 20px;
+	border-top: 5px dashed var(--light-bg);
+	padding-left: 10px;
+}
+
 
 main {
 	max-width: 700px;
@@ -61,18 +88,17 @@ main {
 	padding-bottom: 100px;
 }
 
-.collapsible {
+#filter_button {
 	background-color: var(--bg);
 	color: var(--text);
-	font-size: 1.5rem !important;
 	cursor: pointer;
 	padding: 10px;
 	width: 100%;
 	border: none;
 	text-align: left;
 	outline: none;
-	font-size: 15px;
-	font-family: "Gill Sans";
+	font-size: 1.2rem;
+	font-family: "Archivo";
 }
 
 #filter {
@@ -104,6 +130,10 @@ main {
 #bars-info {
 	display: flex;
 	justify-content: space-between;
+	font-family: "Archivo";
+	font-weight: 200;
+	font-style: italic;
+	font-size: .8rem;
 }
 
 .bar {
@@ -166,16 +196,19 @@ main {
 	width: 30%;
 	padding-top: 5px;
 	padding-bottom: 5px;
+	font-family: "Archivo";
+	font-weight: 200;
 	font-size: .8rem;
-	font-family: monospace;
 }
 
-.tweet p:not(:first-child) {
+.tweet p:not(:first-child), .tweet p:not(:first-child) a {
 	background-color: var(--tweet-accent);
+	color: var(--tweet);
 }
 
-.reply p:not(:first-child) {
+.reply p:not(:first-child), .reply p:not(:first-child) a {
 	background-color: var(--reply-accent);
+	color: var(--reply);
 }
 
 .meta {
@@ -241,13 +274,15 @@ main {
 
 nav {
 	display: flex;
-	justify-content: space-between;
+	justify-content: center;
 	padding: 20px;
 	background-color: var(--bg);
 }
 
 nav p {
 	margin: 0;
+	padding-left: 50px; 
+	padding-right: 50px; 
 }
 
 #next_page,
@@ -259,14 +294,14 @@ nav p {
 	height: 20px;
 	width: 20px;
 	mask-image: url(../img/arrow-right.svg);
-	background: var(--link);
+	background: var(--text);
 }
 
 #prev_page div {
 	height: 20px;
 	width: 20px;
 	mask-image: url(../img/arrow-left.svg);
-	background: var(--link);
+	background: var(--text);
 }
 
 #tod {
@@ -316,11 +351,6 @@ nav p {
 	border-bottom: 1px solid black;
 }
 
-#info {
-	width: 100% !important;
-	padding: 5px;
-}
-
 #top_tweets {
 	display: flex;
 	justify-content: space-between;
@@ -358,5 +388,5 @@ nav p {
 
 footer {
 	font-size: 0.8rem;
-	color: var(--bg);
+	color: gainsboro;
 }
