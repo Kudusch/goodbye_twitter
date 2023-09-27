@@ -46,14 +46,15 @@
     <div id="filter">
       <form>
         <label>Search tweets</label><br>
-        <input type="text" name="q" id="query_filter" />
+        <input type="text" name="q" id="query_filter" placeholder=""/>
         <input type="submit" value="Search" /><br>
       </form>
       <form>
         <label>Filter by date</label><br>
-        <input type="text" name="d" id="date_filter" />
+        <input type="text" name="d" id="date_filter" placeholder="YYYY-MM-DD" pattern="\d\d\d\d-\d\d-(\d\d|\*)"/>
         <input type="submit" value="Date" /><br>
       </form>
+      <input type="submit" id="otd" value="On this day"/><br>
     </div>
     <div id="tweets"></div>
   </main>

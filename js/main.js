@@ -2,22 +2,24 @@
 
 function document_ready(callback) {
   // in case the document is already rendered
-  if (document.readyState != 'loading') callback();
+  if (document.readyState != "loading") callback();
   // modern browsers
-  else if (document.addEventListener) document.addEventListener('DOMContentLoaded', callback);
+  else if (document.addEventListener)
+    document.addEventListener("DOMContentLoaded", callback);
   // IE <= 8
-  else document.attachEvent('onreadystatechange', function() {
-    if (document.readyState == 'complete') callback();
-  });
+  else
+    document.attachEvent("onreadystatechange", function () {
+      if (document.readyState == "complete") callback();
+    });
 }
 // Main
-document_ready(function() {
+document_ready(function () {
   console.log("Ready");
-  
+
   var coll = document.getElementsByClassName("collapsible");
   var i;
   for (i = 0; i < coll.length; i++) {
-    coll[i].addEventListener("click", function() {
+    coll[i].addEventListener("click", function () {
       this.classList.toggle("active");
       var content = this.nextElementSibling;
       if (content.style.display === "flex") {
@@ -27,7 +29,6 @@ document_ready(function() {
       }
     });
   }
-
 
   const url_params = new URLSearchParams(window.location.search);
   if (url_params.has("p")) {
@@ -44,9 +45,6 @@ document_ready(function() {
   if (url_params.has("d")) {
     filter["d"] = url_params.get("d");
     document.getElementById("date_filter").value = url_params.get("d");
-  } else {
-    let cur_date = new Date(Date.now());
-    document.getElementById("date_filter").value = "*-" + String(cur_date.getMonth() + 1).padStart(2, 0) + "-" + String(cur_date.getDate()).padStart(2, 0);
   }
   if (url_params.has("id")) {
     filter["id"] = url_params.get("id");
@@ -56,7 +54,8 @@ document_ready(function() {
   make_bars(tweets, filter);
 
   if (url_params.has("d") || url_params.has("q")) {
-    document.getElementById("info").innerHTML = "Found " + Object.keys(tweets).length + " tweets matching the filter.";
+    document.getElementById("info").innerHTML =
+      "Found " + Object.keys(tweets).length + " tweets matching the filter.";
   } else if (url_params.has("id")) {
     document.getElementById("info").style.display = "none";
     document.getElementById("bars").style.display = "none";
@@ -65,33 +64,48 @@ document_ready(function() {
     document.getElementById("filter_button").style.display = "none";
     document.getElementsByTagName("nav")[0].style.display = "none";
   } else {
-    document.getElementById("info").innerHTML = "Found " + Object.keys(tweets).length + " tweets.";
+    document.getElementById("info").innerHTML =
+      "Found " + Object.keys(tweets).length + " tweets.";
   }
+
+  document.getElementById("otd").onclick = function () {
+    let cur_date = new Date(Date.now());
+    window.location.href =
+      ".?d=*-" +
+      String(cur_date.getMonth() + 1).padStart(2, 0) +
+      "-" +
+      String(cur_date.getDate()).padStart(2, 0);
+  };
 
   let nav_href = [];
   if (url_params.has("d")) {
-    nav_href.push("d=" + url_params.get("d"))
+    nav_href.push("d=" + url_params.get("d"));
   }
   if (url_params.has("q")) {
-    nav_href.push("q=" + url_params.get("q"))
+    nav_href.push("q=" + url_params.get("q"));
   }
   if (nav_href.length != 0) {
-    nav_href = "&" + nav_href.join("&")
+    nav_href = "&" + nav_href.join("&");
   } else {
-    nav_href = nav_href.join("&")
+    nav_href = nav_href.join("&");
   }
-  document.getElementById("next_page").href = "?p=" + (current_page + 1) + nav_href;
-  document.getElementById("prev_page").href = "?p=" + (current_page - 1) + nav_href;
+  document.getElementById("next_page").href =
+    "?p=" + (current_page + 1) + nav_href;
+  document.getElementById("prev_page").href =
+    "?p=" + (current_page - 1) + nav_href;
 
   document.getElementById("cur_page").innerHTML = current_page;
-  document.getElementById("max_page").innerHTML = Math.ceil(tweets.length / tweets_per_page);
+  document.getElementById("max_page").innerHTML = Math.ceil(
+    tweets.length / tweets_per_page
+  );
 
-  document.title = "Indexing " + Object.keys(tweets).length + " Tweets by " + user_name;
+  document.title =
+    "Indexing " + Object.keys(tweets).length + " Tweets by " + user_name;
 
   let start_slice = (current_page - 1) * tweets_per_page;
-  let end_slice = (current_page) * tweets_per_page;
+  let end_slice = current_page * tweets_per_page;
   let page_tweets = tweets_to_html(tweets.slice(start_slice, end_slice));
-  page_tweets.forEach(function(item) {
+  page_tweets.forEach(function (item) {
     document.getElementById("tweets").appendChild(item);
   });
 });
