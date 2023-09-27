@@ -33,6 +33,16 @@ a:hover {
   text-decoration: underline;
 }
 
+hr {
+  border: 1px dashed var(--text);
+}
+
+h2 {
+  font-style: italic;
+  font-weight: lighter;
+  font-family: "Archivo";
+}
+
 header {
   display: flex;
   align-items: baseline;
@@ -81,13 +91,13 @@ header h2:last-child {
   margin-bottom: 20px;
   border-top: 5px dashed var(--light-bg);
   padding-left: 10px;
-  width: 100%;
 }
 
 main {
   max-width: 700px;
   margin: auto;
   padding-bottom: 100px;
+  padding-top: 20px;
 }
 
 #filter_button {
@@ -95,7 +105,7 @@ main {
   color: var(--text);
   cursor: pointer;
   padding: 10px;
-  margin-bottom: 20px;
+  margin-bottom: 5px;
   width: 100%;
   border: none;
   text-align: left;
@@ -158,6 +168,7 @@ main {
 }
 
 #tweets {
+  margin-top: 20px;
 }
 
 .tweet,
