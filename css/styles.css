@@ -20,8 +20,6 @@ body {
   font-size: 1.2rem;
 
   min-height: 100vh;
-  display: grid;
-  grid-template-rows: auto 1fr auto;
 }
 
 a {
@@ -37,10 +35,27 @@ hr {
   border: 1px dashed var(--text);
 }
 
-h2 {
-  font-style: italic;
-  font-weight: lighter;
+h1,
+h2,
+h3 {
   font-family: "Archivo";
+}
+
+#about {
+  font-size: 0.9rem;
+  position: absolute;
+  top: 0;
+  background: var(--tweet);
+  box-shadow: 0 0 0 999px var(--tweet);
+  clip-path: inset(0 -100%);
+  inset: 0 0 auto auto;
+  transform-origin: 0 0;
+  transform: translate(29.3%) rotate(45deg);
+  cursor: pointer;
+  color: var(--text);
+}
+#about a {
+  color: var(--text);
 }
 
 header {
@@ -59,6 +74,8 @@ header h1 a {
 header h2 a {
   color: var(--text);
   opacity: 0.8;
+  font-style: italic;
+  font-weight: lighter;
 }
 header a {
   text-decoration: none;
@@ -88,9 +105,72 @@ header h2:last-child {
   padding-bottom: 10px;
   background-color: var(--bg);
   margin-top: 0px;
-  margin-bottom: 20px;
-  border-top: 5px dashed var(--light-bg);
-  padding-left: 10px;
+}
+
+#filter_button {
+  float: right;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+#filter {
+  justify-content: space-between;
+  flex-wrap: wrap;
+  padding: 10px;
+  background-color: var(--accent);
+}
+
+#filter form {
+  flex: 1;
+}
+
+input[type="text"] {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  border: none;
+  outline: none;
+  border-bottom: 0.2em solid var(--text);
+  border-radius: 0.2em 0.2em 0 0;
+  padding: 0.4em;
+  color: var(--reply-accent);
+  height: 60%;
+}
+
+input[type="submit"] {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  border: 0.2em solid var(--text);
+  background: rgba(0, 0, 0, 0);
+  padding: 0.85em 1.5em;
+  color: var(--text);
+  border-radius: 2em;
+  transition: 1s;
+  display: inline;
+}
+input[type="submit"]:hover,
+input[type="submit"]:focus,
+input[type="submit"]:active {
+  background: var(--text);
+  color: #fff;
+}
+
+input[type="date"] {
+  border: 0.2em solid var(--tweet);
+  padding: 0.8em 0.9em;
+  border-radius: 2em;
+  color: var(--tweet);
+}
+input[type="date"]::-webkit-datetime-edit-text {
+  color: var(--tweet);
+  padding: 0 0.3em;
+}
+input[type="date"]::-webkit-inner-spin-button {
+  display: none;
+}
+input[type="date"]::-webkit-calendar-picker-indicator {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23E91E63' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3' y='4' width='18' height='18' rx='2' ry='2'/%3E%3Cline x1='16' y1='2' x2='16' y2='6'/%3E%3Cline x1='8' y1='2' x2='8' y2='6'/%3E%3Cline x1='3' y1='10' x2='21' y2='10'/%3E%3C/svg%3E");
 }
 
 main {
@@ -100,10 +180,9 @@ main {
   padding-top: 20px;
 }
 
-#filter_button {
+.collapser {
   background-color: var(--bg);
   color: var(--text);
-  cursor: pointer;
   padding: 10px;
   margin-bottom: 5px;
   width: 100%;
@@ -114,23 +193,25 @@ main {
   font-family: "Archivo";
 }
 
-#filter {
+.collapsible {
   display: none;
   overflow: hidden;
+}
+
+#settings {
+  background-color: var(--light-bg);
+  border: 1px solid var(--bg);
+  padding: 5px 10px;
+  font-size: 0.8rem;
+  display: flex;
   justify-content: space-between;
-  flex-wrap: wrap;
-  padding: 10px;
-  background-color: var(--accent);
 }
 
-#filter h2 {
-  width: 100%;
-  margin-top: 0;
-  margin-bottom: 10px;
-}
-
-#filter form {
-  flex: 1;
+#settings form {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 8px;
 }
 
 #bars {

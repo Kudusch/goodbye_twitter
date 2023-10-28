@@ -12,15 +12,61 @@ function document_ready(callback) {
       if (document.readyState == "complete") callback();
     });
 }
+
+function sync_settings() {
+  if (localStorage.getItem("include_replies") !== null) {
+    document.getElementById("include_replies").checked =
+      localStorage.getItem("include_replies") === "true";
+    include_replies = localStorage.getItem("include_replies") === "true";
+  } else {
+    document.getElementById("include_replies").checked = include_replies;
+  }
+
+  if (localStorage.getItem("sort_direction") !== null) {
+    document.getElementById("sort_direction").value =
+      localStorage.getItem("sort_direction");
+    sort_direction = localStorage.getItem("sort_direction");
+  } else {
+    document.getElementById("sort_direction").value = sort_direction;
+  }
+
+  if (localStorage.getItem("tweets_per_page") !== null) {
+    document.getElementById("tweets_per_page").value =
+      localStorage.getItem("tweets_per_page");
+    tweets_per_page = localStorage.getItem("tweets_per_page");
+  } else {
+    document.getElementById("tweets_per_page").value = tweets_per_page;
+  }
+}
+
 // Main
 document_ready(function () {
   console.log("Ready");
+  /* Sync settings */
+  sync_settings();
+  document
+    .querySelectorAll("#settings input, #settings select")
+    .forEach((el) => {
+      el.addEventListener("change", function () {
+        if (el.type == "checkbox") {
+          localStorage.setItem(el.id, el.checked);
+        } else {
+          localStorage.setItem(el.id, el.value);
+        }
+        window.location.reload();
+      });
+    });
 
-  var coll = document.getElementsByClassName("collapsible");
+  var coll = document.getElementsByClassName("collapser");
   var i;
   for (i = 0; i < coll.length; i++) {
     coll[i].addEventListener("click", function () {
-      this.classList.toggle("active");
+      if (this.children.item(1).style.fontStyle == "italic") {
+        this.children.item(1).style.fontStyle = "normal";
+      } else {
+        this.children.item(1).style.fontStyle = "italic";
+      }
+
       var content = this.nextElementSibling;
       if (content.style.display === "flex") {
         content.style.display = "none";
@@ -62,6 +108,8 @@ document_ready(function () {
     document.getElementById("bars-info").style.display = "none";
     document.getElementById("filter").style.display = "none";
     document.getElementById("filter_button").style.display = "none";
+    document.getElementsByClassName("collapser")[0].style.display = "none";
+    document.getElementById("settings").style.display = "none";
     document.getElementsByTagName("nav")[0].style.display = "none";
   } else {
     document.getElementById("info").innerHTML =
@@ -102,10 +150,21 @@ document_ready(function () {
   document.title =
     "Indexing " + Object.keys(tweets).length + " Tweets by " + user_name;
 
-  let start_slice = (current_page - 1) * tweets_per_page;
-  let end_slice = current_page * tweets_per_page;
-  let page_tweets = tweets_to_html(tweets.slice(start_slice, end_slice));
-  page_tweets.forEach(function (item) {
-    document.getElementById("tweets").appendChild(item);
-  });
+  if (tweets.length > 0) {
+    let start_slice = (current_page - 1) * tweets_per_page;
+    let end_slice = current_page * tweets_per_page;
+    let page_tweets = tweets_to_html(tweets.slice(start_slice, end_slice));
+    page_tweets.forEach(function (item) {
+      document.getElementById("tweets").appendChild(item);
+    });
+  } else {
+    document.getElementById("bars").style.display = "none";
+    document.getElementById("bars-info").style.display = "none";
+    document.getElementById("settings").style.display = "none";
+    document.getElementsByTagName("nav")[0].style.display = "none";
+    let error_message = document.createElement("div");
+    //error_message.classList.add("retweet");
+    //error_message.innerHTML = "<p>No tweets found</p>";
+    //document.getElementById("tweets").appendChild(error_message);
+  }
 });
