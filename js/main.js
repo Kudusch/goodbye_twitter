@@ -8,7 +8,7 @@ function document_ready(callback) {
     document.addEventListener("DOMContentLoaded", callback);
   // IE <= 8
   else
-    document.attachEvent("onreadystatechange", function () {
+    document.attachEvent("onreadystatechange", function() {
       if (document.readyState == "complete") callback();
     });
 }
@@ -40,14 +40,14 @@ function sync_settings() {
 }
 
 // Main
-document_ready(function () {
+document_ready(function() {
   console.log("Ready");
   /* Sync settings */
   sync_settings();
   document
     .querySelectorAll("#settings input, #settings select")
     .forEach((el) => {
-      el.addEventListener("change", function () {
+      el.addEventListener("change", function() {
         if (el.type == "checkbox") {
           localStorage.setItem(el.id, el.checked);
         } else {
@@ -60,7 +60,7 @@ document_ready(function () {
   var coll = document.getElementsByClassName("collapser");
   var i;
   for (i = 0; i < coll.length; i++) {
-    coll[i].addEventListener("click", function () {
+    coll[i].addEventListener("click", function() {
       if (this.children.item(1).style.fontStyle == "italic") {
         this.children.item(1).style.fontStyle = "normal";
       } else {
@@ -116,10 +116,10 @@ document_ready(function () {
       "Found " + Object.keys(tweets).length + " tweets.";
   }
 
-  document.getElementById("otd").onclick = function () {
+  document.getElementById("otd").onclick = function() {
     let cur_date = new Date(Date.now());
     window.location.href =
-      ".?d=*-" +
+      window.location.href + "?d=*-" +
       String(cur_date.getMonth() + 1).padStart(2, 0) +
       "-" +
       String(cur_date.getDate()).padStart(2, 0);
@@ -154,9 +154,21 @@ document_ready(function () {
     let start_slice = (current_page - 1) * tweets_per_page;
     let end_slice = current_page * tweets_per_page;
     let page_tweets = tweets_to_html(tweets.slice(start_slice, end_slice));
-    page_tweets.forEach(function (item) {
+    page_tweets.forEach(function(item) {
       document.getElementById("tweets").appendChild(item);
     });
+    if (tweets.length == 1) {
+      let thread = get_thread([url_params.get("id")]);
+      if (thread.length > 0) {
+        let sep = document.createElement("hr");
+        sep.dataset.content = "Thread continued …";
+        sep.classList.add("hr-thread");
+        document.getElementById("tweets").appendChild(sep);
+        tweets_to_html(thread).forEach(function(item) {
+          document.getElementById("tweets").appendChild(item);
+        });
+      }
+    }
   } else {
     document.getElementById("bars").style.display = "none";
     document.getElementById("bars-info").style.display = "none";
