@@ -8,7 +8,7 @@ function document_ready(callback) {
     document.addEventListener("DOMContentLoaded", callback);
   // IE <= 8
   else
-    document.attachEvent("onreadystatechange", function() {
+    document.attachEvent("onreadystatechange", function () {
       if (document.readyState == "complete") callback();
     });
 }
@@ -40,14 +40,14 @@ function sync_settings() {
 }
 
 // Main
-document_ready(function() {
+document_ready(function () {
   console.log("Ready");
   /* Sync settings */
   sync_settings();
   document
     .querySelectorAll("#settings input, #settings select")
     .forEach((el) => {
-      el.addEventListener("change", function() {
+      el.addEventListener("change", function () {
         if (el.type == "checkbox") {
           localStorage.setItem(el.id, el.checked);
         } else {
@@ -60,7 +60,7 @@ document_ready(function() {
   var coll = document.getElementsByClassName("collapser");
   var i;
   for (i = 0; i < coll.length; i++) {
-    coll[i].addEventListener("click", function() {
+    coll[i].addEventListener("click", function () {
       if (this.children.item(1).style.fontStyle == "italic") {
         this.children.item(1).style.fontStyle = "normal";
       } else {
@@ -116,10 +116,11 @@ document_ready(function() {
       "Found " + Object.keys(tweets).length + " tweets.";
   }
 
-  document.getElementById("otd").onclick = function() {
+  document.getElementById("otd").onclick = function () {
     let cur_date = new Date(Date.now());
     window.location.href =
-      window.location.href + "?d=*-" +
+      window.location.href +
+      "?d=*-" +
       String(cur_date.getMonth() + 1).padStart(2, 0) +
       "-" +
       String(cur_date.getDate()).padStart(2, 0);
@@ -144,7 +145,7 @@ document_ready(function() {
 
   document.getElementById("cur_page").innerHTML = current_page;
   document.getElementById("max_page").innerHTML = Math.ceil(
-    tweets.length / tweets_per_page
+    tweets.length / tweets_per_page,
   );
 
   document.title =
@@ -153,8 +154,29 @@ document_ready(function() {
   if (tweets.length > 0) {
     let start_slice = (current_page - 1) * tweets_per_page;
     let end_slice = current_page * tweets_per_page;
-    let page_tweets = tweets_to_html(tweets.slice(start_slice, end_slice));
-    page_tweets.forEach(function(item) {
+    let slice = tweets
+    .slice(start_slice, end_slice)
+    .filter(t => t.tweet.in_reply_to_user_id_str != "15872417");
+    let thread_tweets = tweets
+    .slice(start_slice, end_slice)
+    .filter(t => t.tweet.in_reply_to_user_id_str == "15872417")
+    .sort(function (a, b) {
+      return a.tweet.id_str - b.tweet.id_str;
+    });
+    
+    for (let i = 0; i < slice.length - 1; i++) {
+      let thread_ids = [slice[i].tweet.id_str];
+      thread_tweets.map(t => {
+        if (thread_ids.includes(t.tweet.in_reply_to_status_id_str)) {
+          slice.splice(i+1, 0, t);
+          thread_ids.push(t.tweet.id_str);
+          i++;
+        }
+      });
+    }
+
+    let page_tweets = tweets_to_html(slice);
+    page_tweets.forEach(function (item) {
       document.getElementById("tweets").appendChild(item);
     });
     if (tweets.length == 1) {
@@ -164,7 +186,7 @@ document_ready(function() {
         sep.dataset.content = "Thread continued …";
         sep.classList.add("hr-thread");
         document.getElementById("tweets").appendChild(sep);
-        tweets_to_html(thread).forEach(function(item) {
+        tweets_to_html(thread).forEach(function (item) {
           document.getElementById("tweets").appendChild(item);
         });
       }

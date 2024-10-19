@@ -1,12 +1,11 @@
 function parse_entities(tweet) {
-  console.log(tweet);
   let raw_entities = [];
   if ("entities" in tweet) {
-    Object.entries(tweet.entities).forEach(function(item) {
+    Object.entries(tweet.entities).forEach(function (item) {
       let key = item[0];
       let entities = item[1];
       if (entities.length != 0) {
-        entities.forEach(function(entity) {
+        entities.forEach(function (entity) {
           let parsed_entity = {
             start: parseInt(entity.indices[0]),
             end: parseInt(entity.indices[1]),
@@ -43,11 +42,11 @@ function parse_entities(tweet) {
     });
   }
   if ("extended_entities" in tweet) {
-    Object.entries(tweet.extended_entities).forEach(function(item) {
+    Object.entries(tweet.extended_entities).forEach(function (item) {
       let key = item[0];
       let entities = item[1];
       if (entities.length != 0) {
-        entities.forEach(function(entity) {
+        entities.forEach(function (entity) {
           let parsed_entity = {
             start: parseInt(entity.indices[0]),
             end: parseInt(entity.indices[1]),
@@ -69,12 +68,12 @@ function parse_entities(tweet) {
                 tweet.id_str +
                 "-" +
                 entity.video_info.variants
-                .sort((a, b) => {
-                  return b.bitrate - a.bitrate;
-                })[0]
-                .url.split("/")
-                .slice(-1)[0]
-                .split("?")[0];
+                  .sort((a, b) => {
+                    return b.bitrate - a.bitrate;
+                  })[0]
+                  .url.split("/")
+                  .slice(-1)[0]
+                  .split("?")[0];
               parsed_entity.replacement =
                 "<br><video autoplay loop muted><source src='data/tweets_media/" +
                 media_file +
@@ -111,7 +110,7 @@ function parse_entities(tweet) {
     });
   }
 
-  raw_entities.sort(function(a, b) {
+  raw_entities.sort(function (a, b) {
     return a.start - b.start;
   });
   return raw_entities;
@@ -136,15 +135,15 @@ function enrich_text(tweet) {
   let offset = 0;
   let entities = parse_entities(tweet);
   let text = tweet.full_text;
-  entities.forEach(function(item) {
+  entities.forEach(function (item) {
     text =
       Array.from(text)
-      .slice(0, item.start + offset)
-      .join("") +
+        .slice(0, item.start + offset)
+        .join("") +
       item.replacement +
       Array.from(text)
-      .slice(item.end + offset)
-      .join("");
+        .slice(item.end + offset)
+        .join("");
     offset += item.replacement.length - item.len;
   });
   return text;
@@ -216,7 +215,7 @@ function tweets_to_html(tweets) {
 
 function tweet_to_img(el) {
   let tweet = el.parentNode.parentNode;
-  domtoimage.toPng(tweet).then(function(dataUrl) {
+  domtoimage.toPng(tweet).then(function (dataUrl) {
     var link = document.createElement("a");
     link.download = "my-image-name.png";
     link.href = dataUrl;
@@ -225,47 +224,49 @@ function tweet_to_img(el) {
 }
 
 function get_thread(thread_ids) {
-  let tweets = window.YTD.tweets.part0.filter(function(tweet) {
-    return !tweet["tweet"]["full_text"].startsWith("RT @");
-  }).sort(function(a, b) {
-    return a.tweet.id_str - b.tweet.id_str;
-  }).filter(tweet => {
-    if (thread_ids.includes(tweet.tweet.in_reply_to_status_id_str)) {
-      thread_ids.push(tweet.tweet.id_str);
-      console.log(thread_ids);
-      return true;
-    } else {
-      return false;
-    }
-  });
+  let tweets = window.YTD.tweets.part0
+    .filter(function (tweet) {
+      return !tweet["tweet"]["full_text"].startsWith("RT @");
+    })
+    .sort(function (a, b) {
+      return a.tweet.id_str - b.tweet.id_str;
+    })
+    .filter((tweet) => {
+      if (thread_ids.includes(tweet.tweet.in_reply_to_status_id_str)) {
+        thread_ids.push(tweet.tweet.id_str);
+        return true;
+      } else {
+        return false;
+      }
+    });
   return tweets;
 }
 
 function prep_tweets(filter) {
-  let tweets = window.YTD.tweets.part0.filter(function(tweet) {
+  let tweets = window.YTD.tweets.part0.filter(function (tweet) {
     return !tweet["tweet"]["full_text"].startsWith("RT @");
   });
   if (!include_replies) {
-    tweets = tweets.filter(function(tweet) {
+    tweets = tweets.filter(function (tweet) {
       return !tweet["tweet"]["full_text"].startsWith("@");
     });
   }
   if (Object.keys(filter).length != 0) {
     if ("id" in filter) {
-      tweets = tweets.filter(function(tweet) {
+      tweets = tweets.filter(function (tweet) {
         return tweet.tweet.id_str == filter.id;
       });
       return tweets;
     }
     if ("q" in filter) {
-      tweets = tweets.filter(function(tweet) {
+      tweets = tweets.filter(function (tweet) {
         return tweet["tweet"]["full_text"]
           .toLowerCase()
           .includes(filter.q.toLowerCase());
       });
     }
     if ("d" in filter) {
-      tweets = tweets.filter(function(tweet) {
+      tweets = tweets.filter(function (tweet) {
         let filter_date = filter.d.split("-");
         let y = filter_date[0],
           m = filter_date[1],
@@ -289,13 +290,13 @@ function prep_tweets(filter) {
     }
   }
   if (sort_direction == "asc") {
-    tweets.sort(function(a, b) {
+    tweets.sort(function (a, b) {
       let a_time = Date.parse(a["tweet"]["created_at"]);
       let b_time = Date.parse(b["tweet"]["created_at"]);
       return a_time - b_time;
     });
   } else if (sort_direction == "desc") {
-    tweets.sort(function(a, b) {
+    tweets.sort(function (a, b) {
       let a_time = Date.parse(a["tweet"]["created_at"]);
       let b_time = Date.parse(b["tweet"]["created_at"]);
       return b_time - a_time;
