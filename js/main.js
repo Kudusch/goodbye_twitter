@@ -44,6 +44,11 @@ document_ready(function () {
   console.log("Ready");
   /* Sync settings */
   sync_settings();
+  document.title =
+    "Indexing " + window.YTD.tweets.part0.filter(function (tweet) {
+    return !tweet["tweet"]["full_text"].startsWith("RT @");
+  }).length + " Tweets by " + user_name;
+
   document
     .querySelectorAll("#settings input, #settings select")
     .forEach((el) => {
@@ -148,8 +153,7 @@ document_ready(function () {
     tweets.length / tweets_per_page,
   );
 
-  document.title =
-    "Indexing " + Object.keys(tweets).length + " Tweets by " + user_name;
+  
 
   if (tweets.length > 0) {
     let start_slice = (current_page - 1) * tweets_per_page;
