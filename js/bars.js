@@ -61,7 +61,7 @@ function year_month_from_filter(filter) {
 function bar_mouseOver() {
 	let tooltip = document.getElementById("tooltip");
 	if (this.dataset.type == "all") {
-		tooltip.innerText = this.dataset.count + " tweets posted during " + month_names[parseInt(this.dataset.name.split("-")[1])] + " " + this.dataset.name.split("-")[0];
+		tooltip.innerText = this.dataset.count + " tweets posted during " + month_names[parseInt(this.dataset.name.split("-")[1])-1] + " " + this.dataset.name.split("-")[0];
 	} else if (this.dataset.type == "month") {
 		tooltip.innerText = this.dataset.count + " tweets posted on " + this.dataset.name;
 	} else {
