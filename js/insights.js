@@ -210,6 +210,10 @@ function get_tod(tweets) {
 document_ready(function () {
   console.log("Ready");
 
+  document.querySelectorAll(".user_name").forEach(e => {
+    e.innerHTML = user_name;
+  });
+
   var tweets = prep_tweets({});
   make_bars(tweets, {});
   document.querySelectorAll(".bar").forEach((node) => {
