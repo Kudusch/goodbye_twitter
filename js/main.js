@@ -148,16 +148,22 @@ document_ready(function () {
   document.getElementById("prev_page").href =
     "?p=" + (current_page - 1) + nav_href;
 
+  let max_pages = Math.ceil(tweets.length / tweets_per_page);
+
   document.getElementById("cur_page").innerHTML = current_page;
-  document.getElementById("max_page").innerHTML = Math.ceil(
-    tweets.length / tweets_per_page,
-  );
+  document.getElementById("max_page").innerHTML = max_pages;
 
   
 
   if (tweets.length > 0) {
     let start_slice = (current_page - 1) * tweets_per_page;
     let end_slice = current_page * tweets_per_page;
+    
+    document.getElementById("first_page").href =
+      "?p=" + (1) + nav_href;
+    document.getElementById("last_page").href =
+      "?p=" + (max_pages) + nav_href;
+    
     let slice = tweets
     .slice(start_slice, end_slice)
     .filter(t => t.tweet.in_reply_to_user_id_str != "15872417");
@@ -194,6 +200,13 @@ document_ready(function () {
           document.getElementById("tweets").appendChild(item);
         });
       }
+    }
+    if (current_page == 1) {
+      document.getElementsByTagName("nav")[0].children[0].style.display = "none";
+      document.getElementsByTagName("nav")[0].children[1].style.display = "none";
+    } else if (current_page >= max_pages) {
+        document.getElementsByTagName("nav")[0].children[3].style.display = "none";
+        document.getElementsByTagName("nav")[0].children[4].style.display = "none";
     }
   } else {
     document.getElementById("bars").style.display = "none";

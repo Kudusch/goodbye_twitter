@@ -439,11 +439,22 @@ nav p {
   mask-image: url(../img/arrow-right.svg);
   background: var(--text);
 }
-
 #prev_page div {
   height: 20px;
   width: 20px;
   mask-image: url(../img/arrow-left.svg);
+  background: var(--text);
+}
+#last_page div {
+  height: 20px;
+  width: 20px;
+  mask-image: url(../img/double-arrow-right.svg);
+  background: var(--text);
+}
+#first_page div {
+  height: 20px;
+  width: 20px;
+  mask-image: url(../img/double-arrow-left.svg);
   background: var(--text);
 }
 
