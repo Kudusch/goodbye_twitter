@@ -1,5 +1,4 @@
 function parse_entities(tweet) {
-  console.log(tweet);
   let raw_entities = [];
   if ("entities" in tweet) {
     Object.entries(tweet.entities).forEach(function (item) {
@@ -188,7 +187,7 @@ function tweet_to_html(tweet) {
     as_datetime(tweet.created_at) +
     "</a> <span><a href='index.html?id=" +
     tweet.id_str +
-    "'>🔗</a></span>";
+    "'>🔗</a></span><span onclick='tweet_to_img(this)'>🌄</span>";
   tweet_time.classList.add("datetime");
   tweet_meta.innerHTML =
     "<div class='favorite_count'><div>" +
@@ -212,6 +211,35 @@ function tweets_to_html(tweets) {
     html.push(tweet_to_html(tweet));
   }
   return html;
+}
+
+function tweet_to_img(el) {
+  let tweet = el.parentNode.parentNode;
+  domtoimage.toPng(tweet).then(function (dataUrl) {
+    var link = document.createElement("a");
+    link.download = "my-image-name.png";
+    link.href = dataUrl;
+    link.click();
+  });
+}
+
+function get_thread(thread_ids) {
+  let tweets = window.YTD.tweets.part0
+    .filter(function (tweet) {
+      return !tweet["tweet"]["full_text"].startsWith("RT @");
+    })
+    .sort(function (a, b) {
+      return a.tweet.id_str - b.tweet.id_str;
+    })
+    .filter((tweet) => {
+      if (thread_ids.includes(tweet.tweet.in_reply_to_status_id_str)) {
+        thread_ids.push(tweet.tweet.id_str);
+        return true;
+      } else {
+        return false;
+      }
+    });
+  return tweets;
 }
 
 function prep_tweets(filter) {

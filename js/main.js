@@ -44,6 +44,11 @@ document_ready(function () {
   console.log("Ready");
   /* Sync settings */
   sync_settings();
+  document.title =
+    "Indexing " + window.YTD.tweets.part0.filter(function (tweet) {
+    return !tweet["tweet"]["full_text"].startsWith("RT @");
+  }).length + " Tweets by " + user_name;
+
   document
     .querySelectorAll("#settings input, #settings select")
     .forEach((el) => {
@@ -119,7 +124,8 @@ document_ready(function () {
   document.getElementById("otd").onclick = function () {
     let cur_date = new Date(Date.now());
     window.location.href =
-      ".?d=*-" +
+      window.location.href +
+      "?d=*-" +
       String(cur_date.getMonth() + 1).padStart(2, 0) +
       "-" +
       String(cur_date.getDate()).padStart(2, 0);
@@ -142,21 +148,66 @@ document_ready(function () {
   document.getElementById("prev_page").href =
     "?p=" + (current_page - 1) + nav_href;
 
-  document.getElementById("cur_page").innerHTML = current_page;
-  document.getElementById("max_page").innerHTML = Math.ceil(
-    tweets.length / tweets_per_page
-  );
+  let max_pages = Math.ceil(tweets.length / tweets_per_page);
 
-  document.title =
-    "Indexing " + Object.keys(tweets).length + " Tweets by " + user_name;
+  document.getElementById("cur_page").innerHTML = current_page;
+  document.getElementById("max_page").innerHTML = max_pages;
+
+  
 
   if (tweets.length > 0) {
     let start_slice = (current_page - 1) * tweets_per_page;
     let end_slice = current_page * tweets_per_page;
-    let page_tweets = tweets_to_html(tweets.slice(start_slice, end_slice));
+    
+    document.getElementById("first_page").href =
+      "?p=" + (1) + nav_href;
+    document.getElementById("last_page").href =
+      "?p=" + (max_pages) + nav_href;
+    
+    let slice = tweets
+    .slice(start_slice, end_slice)
+    .filter(t => t.tweet.in_reply_to_user_id_str != "15872417");
+    let thread_tweets = tweets
+    .slice(start_slice, end_slice)
+    .filter(t => t.tweet.in_reply_to_user_id_str == "15872417")
+    .sort(function (a, b) {
+      return a.tweet.id_str - b.tweet.id_str;
+    });
+    
+    for (let i = 0; i < slice.length - 1; i++) {
+      let thread_ids = [slice[i].tweet.id_str];
+      thread_tweets.map(t => {
+        if (thread_ids.includes(t.tweet.in_reply_to_status_id_str)) {
+          slice.splice(i+1, 0, t);
+          thread_ids.push(t.tweet.id_str);
+          i++;
+        }
+      });
+    }
+
+    let page_tweets = tweets_to_html(slice);
     page_tweets.forEach(function (item) {
       document.getElementById("tweets").appendChild(item);
     });
+    if (tweets.length == 1) {
+      let thread = get_thread([url_params.get("id")]);
+      if (thread.length > 0) {
+        let sep = document.createElement("hr");
+        sep.dataset.content = "Thread continued …";
+        sep.classList.add("hr-thread");
+        document.getElementById("tweets").appendChild(sep);
+        tweets_to_html(thread).forEach(function (item) {
+          document.getElementById("tweets").appendChild(item);
+        });
+      }
+    }
+    if (current_page == 1) {
+      document.getElementsByTagName("nav")[0].children[0].style.display = "none";
+      document.getElementsByTagName("nav")[0].children[1].style.display = "none";
+    } else if (current_page >= max_pages) {
+        document.getElementsByTagName("nav")[0].children[3].style.display = "none";
+        document.getElementsByTagName("nav")[0].children[4].style.display = "none";
+    }
   } else {
     document.getElementById("bars").style.display = "none";
     document.getElementById("bars-info").style.display = "none";

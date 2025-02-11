@@ -90,6 +90,9 @@ document_ready(function() {
 
   tweets = prep_tweets({});
   make_bars(tweets, {});
+  document.querySelectorAll(".bar").forEach((node) => {
+    node.onclick = undefined;
+  });
   
   let media_tweets = get_media(tweets);
   //let media_tweets = get_media(tweets, max_slice, max_slice+100);
